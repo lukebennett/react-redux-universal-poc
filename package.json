@@ -1,0 +1,32 @@
+{
+  "name": "react-redux-poc",
+  "version": "0.0.1",
+  "description": "POC implementation of a universal JavaScript app using react and redux",
+  "main": "server.js",
+  "scripts": {
+    "start": "gulp start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukebennett/react-router-poc"
+  },
+  "keywords": [
+    "react",
+    "react-router",
+    "redux",
+    "react-redux",
+    "jsx",
+    "universal"
+  ],
+  "author": "Luke Bennett <luke@lukebennett.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukebennett/react-router-poc/issues"
+  },
+  "homepage": "https://github.com/lukebennett/react-router-poc#readme",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "nodemon": "^1.8.1"
+  }
+}

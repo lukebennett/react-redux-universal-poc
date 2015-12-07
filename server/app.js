@@ -11,7 +11,13 @@ let app = express(),
 
 templateData = {
     title: 'Hello world!',
-    clientUrl: process.env.NODE_ENV === 'production' ? `http://${config.serverHost}:${config.serverPort}` : `http://${config.webpackHost}:${config.webpackPort}`
+    clientUrl: process.env.NODE_ENV === 'production' ? `http://${config.serverHost}:${config.serverPort}` : `http://${config.webpackHost}:${config.webpackPort}`,
+    state: JSON.stringify({
+        todos: [{
+            text: "Check this thing out",
+            completed: false
+        }]
+    })
 };
 
 app.get('*', function (req, res, next) {

@@ -40,7 +40,9 @@
     "koa": "^1.1.2",
     "nodemon": "^1.8.1",
     "react": "^0.14.3",
+    "react-dom": "^0.14.3",
     "react-redux": "^4.0.0",
+    "react-stamp": "^0.3.0",
     "redux": "^3.0.4",
     "webpack": "^1.12.9"
   },

@@ -78,7 +78,13 @@ frontendConfig = {
     filename: 'frontend.js'
   },
   plugins: [],
-  devtool: 'sourcemap'
+  devtool: 'sourcemap',
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+    alias: {
+      shared: path.join(__dirname, 'shared')
+    }
+  }
 };
 
 if (!production) {

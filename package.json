@@ -37,13 +37,16 @@
     "gulp": "^3.9.0",
     "gulp-util": "^3.0.7",
     "handlebars": "^4.0.5",
+    "history": "~1.13.1",
     "koa": "^1.1.2",
     "nodemon": "^1.8.1",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.0",
+    "react-router": "^1.0.1",
     "react-stamp": "^0.3.0",
     "redux": "^3.0.4",
+    "redux-simple-router": "0.0.10",
     "webpack": "^1.12.9"
   },
   "devDependencies": {

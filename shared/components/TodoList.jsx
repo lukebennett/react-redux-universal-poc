@@ -9,7 +9,8 @@ export default reactStamp(React).compose({
         {this.props.todos.map((todo, index) =>
           <Todo {...todo}
                 key={index}
-                onClick={() => this.props.onTodoClick(index)} />
+                onClick={() => this.props.onTodoClick(index)}
+                onSelect={() => this.props.onTodoSelect(index)}/>
         )}
       </ul>
     )

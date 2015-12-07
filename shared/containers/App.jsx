@@ -1,9 +1,10 @@
 import React from 'react';
 import reactStamp from 'react-stamp';
 import { connect } from 'react-redux';
-import { addTodo, completeTodo } from '../actions'
+import { addTodo, completeTodo, selectTodo } from '../actions'
 import AddTodo from '../components/AddTodo';
 import TodoList from '../components/TodoList';
+import { updatePath } from 'redux-simple-router';
 
 const App = reactStamp(React).compose({
   render() {
@@ -11,10 +12,12 @@ const App = reactStamp(React).compose({
     return (
       <div>
         <AddTodo
-          onAddClick={text => dispatch(addTodo(text))} />
+          onAddClick={text => dispatch(addTodo(text))}
+          dispatch={dispatch} />
         <TodoList
           todos={todos}
-          onTodoClick={index => dispatch(completeTodo(index))} />
+          onTodoClick={index => dispatch(completeTodo(index))}
+          onTodoSelect={index => dispatch(selectTodo(index))}/>
       </div>
     )
   }

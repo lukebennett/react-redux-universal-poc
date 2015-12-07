@@ -1,4 +1,4 @@
-import { ADD_TODO, COMPLETE_TODO } from '../actions'
+import { ADD_TODO, COMPLETE_TODO, SELECT_TODO } from '../actions'
 
 const initialState = [];
 
@@ -20,6 +20,20 @@ export function todos(state = initialState, action) {
                 }),
                 ...state.slice(action.index + 1)
               ];
+        case SELECT_TODO:
+            let newState = [
+                ...state.slice(0, action.index),
+                Object.assign({}, state[action.index], {
+                  selected: true
+                }),
+                ...state.slice(action.index + 1)
+              ];
+            for (let i in newState) {
+                if (i != action.index) {
+                    newState[i].selected = false;
+                }
+            }
+            return newState;
         default:
             return state;
     }

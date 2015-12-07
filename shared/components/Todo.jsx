@@ -1,16 +1,17 @@
 import React from 'react';
 import reactStamp from 'react-stamp';
+import { Link } from 'react-router';
 
 export default reactStamp(React).compose({
   render() {
     return (
       <li
-        onClick={this.props.onClick}
         style={{
           textDecoration: this.props.completed ? 'line-through' : 'none',
-          cursor: this.props.completed ? 'default' : 'pointer'
+          fontWeight: this.props.selected ? 'bold' : 'normal'
         }}>
-        {this.props.text}
+        <input type="checkbox" onClick={this.props.onClick} />&nbsp;
+        {this.props.text} [<Link to={this.props.text.toLowerCase().replace(/\s/g, '-')} onClick={this.props.onSelect}>select</Link>]
       </li>
     )
   }

@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import createStore from 'shared/create-store';
 import { addTodo, completeTodo } from 'shared/actions';
-import routes from 'shared/routes';
+import getRoutes from 'shared/routes';
 import { createHistory } from 'history';
-import { Router } from 'react-router';
 import { syncReduxAndRouter } from 'redux-simple-router';
 
 const initialState = JSON.parse(document.getElementById('__STATE__').innerText);
 const store = createStore(initialState);
-const history = createHistory();
+const history = createHistory({ forceRefresh: false });
 
 syncReduxAndRouter(history, store);
 
@@ -22,10 +21,6 @@ store.dispatch(addTodo("Do something"));
 store.dispatch(addTodo("Do something else"));
 
 ReactDOM.render(
-    <Provider store={store}>
-        <Router history={history}>
-            {routes}
-        </Router>
-    </Provider>,
+    React.createElement(Provider, { store }, getRoutes(store, history)),
     document.getElementById('app')
 );

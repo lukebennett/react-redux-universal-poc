@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp'),
     webpack = require('webpack'),
     WebpackDevServer = require('webpack-dev-server'),
@@ -6,6 +8,8 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     fs = require('fs'),
     config = require('config'),
+    DeepMerge = require('deep-merge'),
+    sharedConfig = {},
     backendConfig = {},
     frontendConfig = {},
     node_modules = {},
@@ -14,6 +18,40 @@ var gulp = require('gulp'),
     webpackPort = config.webpackPort;
    
 const production = process.env.NODE_ENV === 'production';
+
+const extend = DeepMerge(function(target, source, key) {
+  if (target instanceof Array) {
+    return [].concat(target, source || []);
+  }
+  return source;
+});
+
+//
+// SHARED CONFIG
+//
+sharedConfig = {
+  module: {
+    loaders: [{
+      loaders: ['react-hot', 'babel?presets[]=react,presets[]=es2015,presets[]=stage-1'],
+      test: /\.jsx?$/,
+      exclude: /node_modules/
+    }]
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+    alias: {
+      shared: path.join(__dirname, 'shared')
+    }
+  },
+  plugins: [],
+  devtool: 'sourcemap',
+  debug: !production
+};
+
+function getConfig(webpackConfig) {
+  let config = extend({}, sharedConfig);
+  return extend(config, webpackConfig);
+}
    
 //
 // BACKEND CONFIG
@@ -23,71 +61,41 @@ fs.readdirSync('node_modules')
     node_modules[module] = 'commonjs ' + module;
   });
    
-backendConfig = {
-  entry: ['./server/init.js'],
+backendConfig = getConfig({
+  entry: ['babel-polyfill', './server/init.js'],
   target: 'node',
-  module: {
-    loaders: [{
-      loader: 'babel',
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      query: {
-        presets: ['react', 'es2015', 'stage-1']
-      }
-    }]
-  },
   node: {
     __filename: true,
     __dirname: false
   },
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
   externals: node_modules,
   output: {
-    path: path.join(__dirname, 'server/build'),
+    path: path.join(__dirname, 'build'),
     filename: 'backend.js'
   },
-  recordsPath: path.join(__dirname, 'server/build/_records'),
+  recordsPath: path.join(__dirname, 'build/_backendRecords'),
   plugins: [
     new webpack.IgnorePlugin(/\.(css|less)$/),
     new webpack.BannerPlugin('require("source-map-support").install();',
                              { raw: true, entryOnly: false })
-  ],
-  devtool: 'sourcemap'
-};
+  ]
+});
 
 //
 // FRONTEND CONFIG
 //
-frontendConfig = {
+frontendConfig = getConfig({
   entry: ['./client/js/main.js'],
-  module: {
-    loaders: [{
-      loader: 'babel',
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      query: {
-        presets: ['react', 'es2015', 'stage-1']
-      }
-    }]
-  },
   output: {
-    path: path.join(__dirname, 'client/build'),
-    publicPath: production ? '/client/' : `http://${webpackHost}:${webpackPort}/client/`,
+    path: path.join(__dirname, 'static/js'),
+    publicPath: production ? '/static/js/' : `http://${webpackHost}:${webpackPort}/static/js/`,
     filename: 'frontend.js'
   },
-  plugins: [],
-  devtool: 'sourcemap',
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-    alias: {
-      shared: path.join(__dirname, 'shared')
-    }
-  }
-};
+  plugins: []
+});
 
 if (!production) {
+  console.log('frontend entry', frontendConfig.entry);
   frontendConfig.entry = [
     `webpack-dev-server/client?http://${webpackHost}:${webpackPort}`,
     'webpack/hot/only-dev-server'
@@ -105,9 +113,9 @@ if (!production) {
 gulp.task('backend-watch', function(done) {
   var isDone = false;
   gutil.log('Firing up the backend...');
- 
+
   webpack(backendConfig).watch(100, function(err, stats) {
-    if (err) { throw new gutil.PluginError("webpack", err); }
+    if (err) { throw new gutil.PluginError('webpack', err); }
     if (!isDone) { done(); isDone = true; }
     if (initialised) { nodemon.restart(); }
     initialised = true;
@@ -120,10 +128,12 @@ gulp.task('frontend-watch', function(done) {
   
   if (production) {
     webpack(frontendConfig).watch(100, function(err, stats) {
-      if (err) { throw new gutil.PluginError("webpack", err); }
+      if (err) { throw new gutil.PluginError('webpack', err); }
       if (!isDone) { done(); isDone = true; }
     });
   } else {
+    done();
+
     new WebpackDevServer(webpack(frontendConfig), {
       publicPath: frontendConfig.output.publicPath,
       hot: true,
@@ -139,7 +149,6 @@ gulp.task('frontend-watch', function(done) {
       } else {
         gutil.log(`Webpack dev server is listening at ${webpackHost}:${webpackPort}`);
       }
-      done();
     });
   }
 });
@@ -149,7 +158,7 @@ gulp.task('start', ['backend-watch', 'frontend-watch'], function() {
    execMap: {
      js: 'node'
    },
-   script: path.join(__dirname, 'server/build/backend.js'),
+   script: path.join(__dirname, 'build/backend.js'),
    ignore: ['*']
   })
   .on('restart', function() {

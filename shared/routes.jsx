@@ -11,7 +11,8 @@ export default (store, history) => {
         return React.createElement(Component, props);
     }
 
-    return <Router history={history} createElement={createElement}>
+    // TODO: Figure out why including createElement below causes errors.
+    return <Router history={history} /*createElement={createElement}*/>
         <Route path="/" component={App}>
             <Route path=":todoIndex" component={App}/>
         </Route>

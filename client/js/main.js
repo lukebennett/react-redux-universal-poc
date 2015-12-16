@@ -15,11 +15,6 @@ syncReduxAndRouter(history, store);
 
 store.subscribe(() => console.log("Store was updated!", store.getState()));
 
-store.dispatch(addTodo("This is a new todo"));
-store.dispatch(addTodo("This is another new todo"));
-store.dispatch(addTodo("Do something"));
-store.dispatch(addTodo("Do something else"));
-
 ReactDOM.render(
     React.createElement(Provider, { store }, getRoutes(store, history)),
     document.getElementById('app')

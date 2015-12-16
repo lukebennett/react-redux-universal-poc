@@ -95,8 +95,8 @@ frontendConfig = getConfig({
 });
 
 if (!production) {
-  console.log('frontend entry', frontendConfig.entry);
   frontendConfig.entry = [
+    'babel-polyfill',
     `webpack-dev-server/client?http://${webpackHost}:${webpackPort}`,
     'webpack/hot/only-dev-server'
   ].concat(frontendConfig.entry);

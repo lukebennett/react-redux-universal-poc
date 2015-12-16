@@ -8,19 +8,40 @@ import { updatePath } from 'redux-simple-router';
 
 const App = reactStamp(React).compose({
   render() {
-    const { dispatch, todos } = this.props;
+    const { addTodo, completeTodo, selectTodo, todos } = this.props;
     return (
       <div>
         <AddTodo
-          onAddClick={text => dispatch(addTodo(text))}
-          dispatch={dispatch} />
+          onAddClick={text => addTodo(text)} />
         <TodoList
           todos={todos}
-          onTodoClick={index => dispatch(completeTodo(index))}
-          onTodoSelect={index => dispatch(selectTodo(index))}/>
+          onTodoClick={index => completeTodo(index)}
+          onTodoSelect={index => selectTodo(index)}/>
       </div>
     )
   }
 });
 
-export default connect((state) => state)(App);
+App.populateStore = (store, props) => {
+    const id = decodeURI(props.params.todoIndex),
+          todo = store.dispatch(selectTodo(id));
+}
+
+function mapStateToProps(state) {
+  return {
+    todos: state.todos
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    selectTodo: (index) => dispatch(selectTodo(index)),
+    completeTodo: (index) => dispatch(completeTodo(index)),
+    addTodo: (text) => dispatch(addTodo(text))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

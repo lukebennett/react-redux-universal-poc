@@ -5,9 +5,9 @@ import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
 import config from 'config';
-import createStore from '../shared/create-store';
-import actions from '../shared/actions';
-import routes from '../shared/routes';
+import createStore from 'shared/create-store';
+import { addTodo } from 'shared/actions';
+import getRoutes from 'shared/routes';
 import { Router, match, RoutingContext } from 'react-router';
 import { Provider } from 'react-redux';
 import { updatePath } from 'redux-simple-router';
@@ -18,7 +18,8 @@ const ProviderFactory = React.createFactory(Provider),
 let app = express(),
     rawTemplate = fs.readFileSync(path.join(__dirname, '../server/views/index.hbs'), 'utf8'),
     template = handlebars.compile(rawTemplate),
-    templateData = {};
+    templateData = {},
+    initialState = {};
 
 templateData = {
     title: 'Hello world!',
@@ -26,9 +27,16 @@ templateData = {
 };
 
 app.get('*', function (req, res, next) {
-    const store = createStore();
+    const store = createStore(initialState),
+          routes = getRoutes(store);
     console.log('GET ', req.url);
-    renderRouteToString(store, req.url, (err, redirect, markup) => {
+
+    store.dispatch(addTodo("This is a new todo"));
+    store.dispatch(addTodo("This is another new todo"));
+    store.dispatch(addTodo("Do something"));
+    store.dispatch(addTodo("Do something else"));
+
+    renderRouteToString(routes, store, req.url, (err, redirect, markup) => {
         let state = {
                 ...templateData,
                 state: JSON.stringify(store.getState()),
@@ -47,17 +55,17 @@ function fetchAllData(store, routeProps) {
     }));
 }
 
-function renderRouteToString(store, url, callback) {
+function renderRouteToString(routes, store, url, callback) {
     match({ routes, location: url }, async function(err, redirect, renderProps) {
         if (err || redirect) {
             callback(err, redirect);
         } else {
             store.dispatch(updatePath(url));
-           
+
             let markup, renderErr;
             try {
                 await fetchAllData(store, renderProps);
-                markup = ReactDOM.renderToString(ProviderFactory({store}), RoutingContextFactory(renderProps));
+                markup = ReactDOM.renderToString(ProviderFactory({store}, RoutingContextFactory(renderProps)));
             } catch(err) {
                 renderErr = err;
             }

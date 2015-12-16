@@ -21,15 +21,20 @@ export function todos(state = initialState, action) {
                 ...state.slice(action.index + 1)
               ];
         case SELECT_TODO:
+            let index = isNaN(action.index)
+                        ? state.findIndex((todo) => todo.text.toLowerCase().replace(/\s/g, '-') === action.index)   
+                        : action.index,
+                current = state.findIndex((todo) => todo.selected);
+            if (current === index) return state;
             let newState = [
-                ...state.slice(0, action.index),
-                Object.assign({}, state[action.index], {
+                ...state.slice(0, index),
+                Object.assign({}, state[index], {
                   selected: true
                 }),
-                ...state.slice(action.index + 1)
+                ...state.slice(index + 1)
               ];
             for (let i in newState) {
-                if (i != action.index) {
+                if (i != index) {
                     newState[i].selected = false;
                 }
             }

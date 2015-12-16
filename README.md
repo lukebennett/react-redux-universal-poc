@@ -12,6 +12,8 @@ Proof of concept universal JavaScript app using React, Redux and [react-router-r
 
 ## Usage
 
+Uses the [config](https://github.com/lorenwest/node-config) module for handling configuration - view its readme for details on how to configure the app to your environment.
+
 ```js
 npm start
 

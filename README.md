@@ -17,6 +17,10 @@ npm start
 
 ```
 
-### License
+## Credits
+
+The bulk of this approach is based on the blog posts and work of [James Long](http://jlongster.com/blog) which was very helpful, especially [his blog repository](https://github.com/jlongster/blog/blob/master/server/app.js).
+
+## License
 
 MIT

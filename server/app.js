@@ -19,11 +19,15 @@ let app = express(),
     rawTemplate = fs.readFileSync(path.join(__dirname, '../server/views/index.hbs'), 'utf8'),
     template = handlebars.compile(rawTemplate),
     templateData = {},
-    initialState = {};
+    initialState = {},
+    serverHost = config.serverHost || 'localhost',
+    serverPort = config.serverPort || '8000',
+    webpackHost = config.webpackHost || 'localhost',
+    webpackPort = config.webpackPort || '8001';
 
 templateData = {
     title: 'Hello world!',
-    clientUrl: process.env.NODE_ENV === 'production' ? `http://${config.serverHost}:${config.serverPort}` : `http://${config.webpackHost}:${config.webpackPort}`
+    clientUrl: process.env.NODE_ENV === 'production' ? `http://${serverHost}:${serverPort}` : `http://${webpackHost}:${webpackPort}`
 };
 
 app.get('*', function (req, res, next) {

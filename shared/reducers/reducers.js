@@ -22,7 +22,7 @@ export function todos(state = initialState, action) {
               ];
         case SELECT_TODO:
             let index = isNaN(action.index)
-                        ? state.findIndex((todo) => todo.text.toLowerCase().replace(/\s/g, '-') === action.index)   
+                        ? state.findIndex((todo) => todo.text.toLowerCase().replace(/\s/g, '-') === action.index)
                         : action.index,
                 current = state.findIndex((todo) => todo.selected);
             if (current === index) return state;

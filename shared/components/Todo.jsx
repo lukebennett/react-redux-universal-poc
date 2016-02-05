@@ -10,7 +10,7 @@ export default reactStamp(React).compose({
           textDecoration: this.props.completed ? 'line-through' : 'none',
           fontWeight: this.props.selected ? 'bold' : 'normal'
         }}>
-        <input type="checkbox" onClick={this.props.onClick} />&nbsp;
+        <input type="checkbox" onClick={this.props.onClick} checked={this.props.completed}/>&nbsp;
         {this.props.text} [<Link to={this.props.text.toLowerCase().replace(/\s/g, '-')} onClick={this.props.onSelect}>select</Link>]
       </li>
     )

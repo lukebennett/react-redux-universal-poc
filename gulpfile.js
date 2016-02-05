@@ -14,9 +14,9 @@ var gulp = require('gulp'),
     frontendConfig = {},
     node_modules = {},
     initialised = false,
-    webpackHost = config.webpackHost,
-    webpackPort = config.webpackPort;
-   
+    webpackHost = config.webpackHost || 'localhost',
+    webpackPort = config.webpackPort || '8001';
+
 const production = process.env.NODE_ENV === 'production';
 
 const extend = DeepMerge(function(target, source, key) {
@@ -52,7 +52,7 @@ function getConfig(webpackConfig) {
   let config = extend({}, sharedConfig);
   return extend(config, webpackConfig);
 }
-   
+
 //
 // BACKEND CONFIG
 //
@@ -60,7 +60,7 @@ fs.readdirSync('node_modules')
   .forEach(function(module) {
     node_modules[module] = 'commonjs ' + module;
   });
-   
+
 backendConfig = getConfig({
   entry: ['babel-polyfill', './server/init.js'],
   target: 'node',
@@ -100,12 +100,12 @@ if (!production) {
     `webpack-dev-server/client?http://${webpackHost}:${webpackPort}`,
     'webpack/hot/only-dev-server'
   ].concat(frontendConfig.entry);
-  
+
   frontendConfig.plugins = frontendConfig.plugins.concat([
     new webpack.HotModuleReplacementPlugin({ quiet: true }),
     new webpack.NoErrorsPlugin()
   ]);
-}  
+}
 
 //
 // TASKS
@@ -125,7 +125,7 @@ gulp.task('backend-watch', function(done) {
 gulp.task('frontend-watch', function(done) {
   var isDone = false;
   gutil.log('Firing up the frontend...');
-  
+
   if (production) {
     webpack(frontendConfig).watch(100, function(err, stats) {
       if (err) { throw new gutil.PluginError('webpack', err); }
